@@ -1,0 +1,20 @@
+services:
+  coldchain-api:
+    build: .
+    image: coldchain-api:latest
+    container_name: coldchain-api
+    ports:
+      - "8000:8000"
+    environment:
+      COLDCHAIN_DB_PATH: /data/coldchain.db
+    volumes:
+      - coldchain-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health').status==200 else 1)"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  coldchain-data:
